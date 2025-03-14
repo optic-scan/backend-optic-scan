@@ -1,4 +1,4 @@
-const Pasien = require('../../../models/Pasien.js');
+const User = require('../../models/User.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
@@ -12,15 +12,15 @@ const handleLogin = async (req, res) => {
     }
 
     try {
-        const pasienFound = await Pasien.findOne({
+        const userFound = await User.findOne({
             where: { email },
         });
-        if (!pasienFound) {
+        if (!userFound) {
             return res
                 .status(401)
                 .json({ message: 'Email atau password salah' });
         }
-        const verifikasi = await bcrypt.compare(password, pasienFound.password);
+        const verifikasi = await bcrypt.compare(password, userFound.password);
         if (!verifikasi) {
             return res
                 .status(401)
@@ -28,19 +28,19 @@ const handleLogin = async (req, res) => {
         }
 
         const accessToken = jwt.sign(
-            { user_id: pasienFound.pasien_id, user_type: 'pasien' },
+            { user_id: userFound.user_id, role: userFound.role },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: '60m' }
         );
         const refreshToken = jwt.sign(
-            { user_id: pasienFound.pasien_id, user_type: 'pasien' },
+            { user_id: userFound.user_id, role: userFound.role },
             process.env.REFRESH_TOKEN_SECRET,
             { expiresIn: '1d' }
         );
 
-        await Pasien.update(
+        await User.update(
             { refresh_token: refreshToken },
-            { where: { pasien_id: pasienFound.pasien_id } }
+            { where: { user_id: userFound.user_id } }
         );
 
         res.cookie('jwt', refreshToken, {
@@ -51,7 +51,7 @@ const handleLogin = async (req, res) => {
         });
         res.json({
             message: 'Login berhasil',
-            user_type: 'pasien',
+            role: userFound.role,
             accessToken,
         });
     } catch (error) {

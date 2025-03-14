@@ -1,31 +1,29 @@
-const Pasien = require('../../../models/Pasien.js');
+const User = require('../../models/User.js');
 
 const handleLogout = async (req, res) => {
     const cookies = req.cookies;
     if (!cookies?.jwt) {
         return res
             .status(200)
-            .json({ message: 'Tidak ada token, sudah logout' });
+            .json({ message: 'Tidak ada token pada cookie, sudah logout' });
     }
 
     const refreshToken = cookies.jwt;
 
-    const pasienFound = await Pasien.findOne({
+    const userFound = await User.findOne({
         where: { refresh_token: refreshToken },
     });
-    if (!pasienFound) {
+    if (!userFound) {
         res.clearCookie('jwt', refreshToken, {
             httpOnly: true,
             maxAge: 24 * 60 * 60 * 1000,
         });
-        return res
-            .status(200)
-            .json({
-                message: 'User tidak ditemukan, cookie sudah dibersihkan',
-            });
+        return res.status(200).json({
+            message: 'User tidak ditemukan, cookie sudah dibersihkan',
+        });
     }
 
-    await pasienFound.update(
+    await userFound.update(
         { refresh_token: null },
         { where: { refresh_token: refreshToken } }
     );

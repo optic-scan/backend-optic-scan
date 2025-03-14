@@ -1,13 +1,13 @@
-const Pasien = require('../../../models/Pasien.js');
+const User = require('../../models/User.js');
 const bcrypt = require('bcrypt');
 
 const handleRegister = async (req, res) => {
-    const { name, email, birthdate, password } = req.body;
-    if (!name || !email || !birthdate || !password) {
+    const { name, email, birthdate, role, password } = req.body;
+    if (!name || !email || !birthdate || !role || !password) {
         return res.status(400).json({ message: 'Data tidak lengkap' });
     }
 
-    const duplicate = await Pasien.findOne({
+    const duplicate = await User.findOne({
         where: { email },
     });
     if (duplicate)
@@ -15,14 +15,15 @@ const handleRegister = async (req, res) => {
 
     try {
         const hashedPwd = await bcrypt.hash(password, 10);
-        const newPasien = {
+        const newUser = {
             name,
             email,
             birthdate,
+            role,
             password: hashedPwd,
         };
-        await Pasien.create(newPasien);
-        res.status(201).json({ message: 'User Pasien berhasil dibuat' });
+        await User.create(newUser);
+        res.status(201).json({ message: 'User baru berhasil dibuat' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
