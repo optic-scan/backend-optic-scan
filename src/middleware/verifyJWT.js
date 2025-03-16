@@ -10,16 +10,15 @@ const verifyJWT = (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     if (!token) {
-        return res.status(401).json({ message: 'Token tidak ada' });
+        return res.status(401).json({ message: 'Token akses tidak ada' });
     }
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err)
             return res
                 .status(403)
-                .json({ message: 'Token tidak valid atau kadaluarsa' });
+                .json({ message: 'Token akses tidak valid atau kadaluwarsa' });
         req.user_id = decoded.user_id;
-        req.user_type = decoded.type;
         next();
     });
 };

@@ -5,7 +5,7 @@ const app = express();
 const cors = require('cors');
 const db = require('./src/configs/database.js');
 const cookieParser = require('cookie-parser');
-// const verifyJWT = require('./src/middleware/verifyJWT.js');
+const verifyJWT = require('./src/middleware/verifyJWT.js');
 
 app.use(
     cors({
@@ -23,7 +23,7 @@ app.use(express.static('public'));
 })();
 
 app.use('/', require('./src/routes/AuthRoutes.js'));
-// app.use('/pasien', require('./src/routes/PasienRoutes.js'));
+app.use('/user', verifyJWT, require('./src/routes/UserRoutes.js'));
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
