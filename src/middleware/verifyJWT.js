@@ -1,3 +1,4 @@
+const User = require('../models/User.js');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -13,11 +14,17 @@ const verifyJWT = (req, res, next) => {
         return res.status(401).json({ message: 'Token akses tidak ada' });
     }
 
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, decoded) => {
         if (err)
             return res
                 .status(403)
                 .json({ message: 'Token akses tidak valid atau kadaluwarsa' });
+
+        const userFound = await User.findByPk(decoded.user_id);
+        if (!userFound) {
+            return res.status(401).json({ message: 'User tidak ditemukan' });
+        }
+
         req.user_id = decoded.user_id;
         next();
     });
