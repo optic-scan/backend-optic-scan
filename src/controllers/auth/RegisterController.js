@@ -7,6 +7,16 @@ const handleRegister = async (req, res) => {
         return res.status(400).json({ message: 'Data tidak lengkap' });
     }
 
+    if (role !== 'pasien' && role !== 'dokter') {
+        return res.status(400).json({ message: 'Role tidak valid' });
+    }
+
+    const isEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!isEmail(email)) {
+        return res.status(400).json({ message: 'Format email tidak valid' });
+    }
+
     const duplicate = await User.findOne({
         where: { email },
     });
@@ -21,10 +31,13 @@ const handleRegister = async (req, res) => {
             birthdate,
             role,
             password: hashedPwd,
+            profile_pic: null,
+            refresh_token: null,
         };
         await User.create(newUser);
         res.status(201).json({ message: 'User baru berhasil dibuat' });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: error.message });
     }
 };
