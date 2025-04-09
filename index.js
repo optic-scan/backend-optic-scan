@@ -1,5 +1,5 @@
 require('dotenv').config();
-const PORT = process.env.PORT | 4000;
+const PORT = process.env.PORT || 4000;
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -19,7 +19,12 @@ app.use(express.static('public'));
 
 // Sync table pada database
 (async () => {
-    await db.sync();
+    try {
+        await db.sync();
+        console.log('Database synced');
+    } catch (err) {
+        console.error('DB Sync Error:', err);
+    }
 })();
 
 app.use('/auth', require('./src/routes/AuthRoutes.js'));
