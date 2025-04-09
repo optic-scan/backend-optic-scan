@@ -5,7 +5,7 @@ const getUserProfile = async (req, res) => {
 
     try {
         const response = await User.findByPk(user_id, {
-            attributes: { include: ['name', 'email', 'birthdate', 'role'] },
+            attributes: ['name', 'email', 'birthdate', 'role', 'profile_pic'],
         });
         res.json({
             message: `Data user yang login berhasil diambil`,

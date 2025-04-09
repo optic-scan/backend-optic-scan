@@ -9,11 +9,31 @@ const User = db.define('user', {
         primaryKey: true,
         autoIncrement: true,
     },
-    name: DataTypes.STRING(100),
-    email: DataTypes.STRING(100),
-    birthdate: DataTypes.DATEONLY,
-    role: DataTypes.ENUM('pasien', 'dokter'),
-    password: DataTypes.STRING(100),
+    name: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+    },
+    email: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        unique: true,
+    },
+    password: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+    },
+    birthdate: {
+        type: DataTypes.DATEONLY,
+        allowNull: false,
+    },
+    role: {
+        type: DataTypes.ENUM('pasien', 'dokter'),
+        allowNull: false,
+    },
+    profile_pic: {
+        type: DataTypes.STRING(100),
+        defaultValue: null, // ini nanti ubah pake foto profil default kalau user belom upload
+    },
     refresh_token: DataTypes.STRING,
 });
 
