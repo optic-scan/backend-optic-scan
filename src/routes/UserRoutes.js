@@ -7,6 +7,6 @@ const {
 } = require('../controllers/UserController.js');
 
 router.get('/profile', getUserProfile);
-router.get('/change-password', changePassword);
+router.post('/change-password', changePassword);
 
 module.exports = router;
