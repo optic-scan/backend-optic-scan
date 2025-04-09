@@ -22,8 +22,11 @@ app.use(express.static('public'));
     await db.sync();
 })();
 
-app.use('/', require('./src/routes/AuthRoutes.js'));
+app.use('/auth', require('./src/routes/AuthRoutes.js'));
 app.use('/user', verifyJWT, require('./src/routes/UserRoutes.js'));
+app.use((req, res) => {
+    res.status(404).json({ message: 'Endpoint tidak ditemukan' });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

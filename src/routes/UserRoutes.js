@@ -1,12 +1,10 @@
 const express = require('express');
 const router = express.Router();
 
-const {
-    getUserProfile,
-    changePassword,
-} = require('../controllers/UserController.js');
+const { getUserProfile } = require('../controllers/UserController.js');
+const changePasswordController = require('../controllers/auth/ChangePasswordController');
 
 router.get('/profile', getUserProfile);
-router.post('/change-password', changePassword);
+router.patch('/change-password', changePasswordController);
 
 module.exports = router;
