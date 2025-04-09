@@ -1,6 +1,10 @@
 const User = require('../../models/User.js');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const {
+    generateAccessToken,
+    generateRefreshToken,
+} = require('../../utils/jwt.js');
 require('dotenv').config();
 
 const handleLogin = async (req, res) => {
@@ -14,29 +18,31 @@ const handleLogin = async (req, res) => {
     try {
         const userFound = await User.findOne({
             where: { email },
+            attributes: ['user_id', 'email', 'password', 'role'],
         });
         if (!userFound) {
             return res
                 .status(401)
                 .json({ message: 'Email atau password salah' });
         }
-        const verifikasi = await bcrypt.compare(password, userFound.password);
-        if (!verifikasi) {
+        const isPasswordMatch = await bcrypt.compare(
+            password,
+            userFound.password
+        );
+        if (!isPasswordMatch) {
             return res
                 .status(401)
                 .json({ message: 'Email atau password salah' });
         }
 
-        const accessToken = jwt.sign(
-            { user_id: userFound.user_id, role: userFound.role },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: '60m' }
-        );
-        const refreshToken = jwt.sign(
-            { user_id: userFound.user_id, role: userFound.role },
-            process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: '1d' }
-        );
+        const accessToken = generateAccessToken({
+            user_id: userFound.user_id,
+            role: userFound.role,
+        });
+        const refreshToken = generateRefreshToken({
+            user_id: userFound.user_id,
+            role: userFound.role,
+        });
 
         await User.update(
             { refresh_token: refreshToken },
@@ -56,7 +62,9 @@ const handleLogin = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Terjadi kesalahan pada server' });
+        res.status(500).json({
+            message: 'Terjadi kesalahan saat login pada server',
+        });
     }
 };
 
