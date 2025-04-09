@@ -9,6 +9,12 @@ const verifyJWT = (req, res, next) => {
             .status(401)
             .json({ message: 'Authorization header tidak ada' });
 
+    if (!authHeader.startsWith('Bearer ')) {
+        return res
+            .status(401)
+            .json({ message: 'Format token salah (harus Bearer)' });
+    }
+
     const token = authHeader.split(' ')[1];
     if (!token) {
         return res.status(401).json({ message: 'Token akses tidak ada' });
@@ -20,13 +26,23 @@ const verifyJWT = (req, res, next) => {
                 .status(403)
                 .json({ message: 'Token akses tidak valid atau kadaluwarsa' });
 
-        const userFound = await User.findByPk(decoded.user_id);
-        if (!userFound) {
-            return res.status(401).json({ message: 'User tidak ditemukan' });
-        }
+        try {
+            const userFound = await User.findByPk(decoded.user_id);
+            if (!userFound) {
+                return res
+                    .status(401)
+                    .json({ message: 'User tidak ditemukan' });
+            }
 
-        req.user_id = decoded.user_id;
-        next();
+            req.user_id = decoded.user_id;
+            req.role = decoded.role;
+            next();
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({
+                message: 'Terjadi kesalahan saat verifikasi token',
+            });
+        }
     });
 };
 
