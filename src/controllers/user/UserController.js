@@ -1,4 +1,3 @@
-const User = require('../models/User.js');
 const User = require('../../models/User.js');
 
 const getUserProfile = async (req, res) => {
@@ -17,6 +16,29 @@ const getUserProfile = async (req, res) => {
     }
 };
 
+const updateUserProfile = async (req, res) => {
+    const user_id = req.user_id;
+    const { name, email, birthdate } = req.body;
+
+    try {
+        const user = await User.findByPk(user_id);
+
+        await user.update({
+            name: name || user.name,
+            email: email || user.email,
+            birthdate: birthdate || user.birthdate,
+        });
+
+        res.json({ message: 'Profil berhasil diperbarui' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Terjadi kesalahan saat update profil',
+        });
+    }
+};
+
 module.exports = {
     getUserProfile,
+    updateUserProfile,
 };
