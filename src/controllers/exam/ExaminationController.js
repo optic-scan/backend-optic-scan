@@ -98,7 +98,52 @@ const submitExam = async (req, res) => {
     }
 };
 
+const diagnosisDokter = async (req, res) => {
+    const user_id = req.user_id;
+    const { examination_id, diagnosis, doctors_note } = req.body;
+
+    try {
+        const user = await User.findByPk(user_id);
+        if (user.role != 'dokter') {
+            return res.status(403).json({
+                message: 'Hanya dokter yang bisa memberikan diagnosa',
+            });
+        }
+
+        const examination = await Examination.findByPk(examination_id);
+        if (!examination) {
+            return res
+                .status(404)
+                .json({ message: 'Hasil pemeriksaan tidak ditemukan' });
+        }
+
+        if (examination.doctor_id !== user_id) {
+            return res.status(403).json({
+                message:
+                    'Anda bukan dokter yang ditugaskan untuk pemeriksaan ini',
+            });
+        }
+
+        await examination.update({
+            diagnosis: diagnosis,
+            doctors_note: doctors_note,
+            status: 'complete',
+        });
+
+        res.status(200).json({
+            message: 'Diagnosa berhasil diperbarui',
+            data: examination,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Gagal memberikan diagnosa',
+            error: error.message,
+        });
+    }
+};
+
 module.exports = {
     getExamResult,
     submitExam,
+    diagnosisDokter,
 };
