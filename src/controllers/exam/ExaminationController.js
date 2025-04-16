@@ -48,12 +48,18 @@ const submitExam = async (req, res) => {
     );
 
     try {
-        const doctor = await User.findOne({ where: { role: 'dokter' } });
-        if (!doctor) {
+        const doctors = await User.findAll({
+            where: { role: 'dokter' },
+        });
+
+        if (doctors.length === 0) {
             return res
                 .status(500)
                 .json({ message: 'Dokter tidak tersedia saat ini' });
         }
+
+        const randomDoctor =
+            doctors[Math.floor(Math.random() * doctors.length)];
 
         const form = new FormData();
         form.append('file', fs.createReadStream(eyePicPath));
@@ -71,7 +77,7 @@ const submitExam = async (req, res) => {
 
         const newExam = await Examination.create({
             patient_id: patientId,
-            doctor_id: doctor.user_id,
+            doctor_id: randomDoctor.user_id,
             examination_date: new Date(),
             eye_pic: req.file.filename,
             complaints: complaints || null,
