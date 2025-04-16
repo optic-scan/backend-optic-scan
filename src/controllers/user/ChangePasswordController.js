@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const User = require('../../models/User.js');
+const { User } = require('../../models');
 
 const changePassword = async (req, res) => {
     const user_id = req.user_id;

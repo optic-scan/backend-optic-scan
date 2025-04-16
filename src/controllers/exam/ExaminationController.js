@@ -1,5 +1,4 @@
-const User = require('../models/User.js');
-const Examination = require('../models/Examination.js');
+const { User, Examination } = require('../../models');
 
 const getMyExamResult = async (req, res) => {
     const user_id = req.user_id;

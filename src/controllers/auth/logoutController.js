@@ -1,4 +1,4 @@
-const User = require('../../models/User.js');
+const { User } = require('../../models');
 
 const handleLogout = async (req, res) => {
     const refreshToken = req.cookies?.jwt;
