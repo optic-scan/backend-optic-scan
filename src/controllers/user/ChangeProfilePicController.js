@@ -16,13 +16,15 @@ const changeProfilePic = async (req, res) => {
         const user = await User.findByPk(user_id);
         const oldProfilePic = user.profile_pic;
 
-        const oldFilePath = path.join(
-            __dirname,
-            '../../../public/images/profile_pics',
-            oldProfilePic
-        );
-        if (oldProfilePic && fs.existsSync(oldFilePath)) {
-            fs.unlinkSync(oldFilePath);
+        if (oldProfilePic != 'blank-profile-pic.png') {
+            const oldFilePath = path.join(
+                __dirname,
+                '../../../public/images/profile-pics',
+                oldProfilePic
+            );
+            if (oldProfilePic && fs.existsSync(oldFilePath)) {
+                fs.unlinkSync(oldFilePath);
+            }
         }
 
         await user.update({ profile_pic: req.file.filename });

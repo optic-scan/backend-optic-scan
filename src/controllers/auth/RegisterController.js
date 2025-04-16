@@ -31,7 +31,7 @@ const handleRegister = async (req, res) => {
             birthdate,
             role,
             password: hashedPwd,
-            profile_pic: null,
+            profile_pic: 'blank-profile-pic.png',
             refresh_token: null,
         };
         await User.create(newUser);

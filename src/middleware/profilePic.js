@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const uploadDir = path.join(__dirname, '../../public/images/profile_pics');
+const uploadDir = path.join(__dirname, '../../public/images/profile-pics');
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
         const timestamp = Date.now();
         const ext = path.extname(file.originalname);
         const userId = req.user_id;
-        cb(null, `${userId}_${timestamp}${ext}`);
+        cb(null, `${userId}-${timestamp}${ext}`);
     },
 });
 
