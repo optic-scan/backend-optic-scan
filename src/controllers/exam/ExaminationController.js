@@ -1,18 +1,21 @@
+const { Op } = require('sequelize');
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
 const FormData = require('form-data');
 const { User, Examination } = require('../../models');
 
-const getMyExamResult = async (req, res) => {
+const getExamResult = async (req, res) => {
     const user_id = req.user_id;
 
     try {
         const response = await Examination.findAll({
-            where: { patient_id: user_id },
+            where: {
+                [Op.or]: [{ patient_id: user_id }, { doctor_id: user_id }],
+            },
         });
         res.json({
-            message: `Data hasil pemeriksaan login berhasil diambil`,
+            message: `Data hasil pemeriksaan berdasarkan user login berhasil diambil`,
             data: response,
         });
     } catch (error) {
