@@ -1,5 +1,5 @@
-const User = require('../../models/User.js');
 const bcrypt = require('bcrypt');
+const User = require('../../models/User.js');
 
 const changePassword = async (req, res) => {
     const user_id = req.user_id;
@@ -18,7 +18,9 @@ const changePassword = async (req, res) => {
             return res.status(401).json({ message: 'Password lama salah' });
         }
 
-        await User.update({ password: newPassword }, { where: { user_id } });
+        const hashedPwd = await bcrypt.hash(newPassword, 10);
+
+        await User.update({ password: hashedPwd }, { where: { user_id } });
         return res.json({ message: 'Password berhasil diubah' });
     } catch (error) {
         console.error(error);
