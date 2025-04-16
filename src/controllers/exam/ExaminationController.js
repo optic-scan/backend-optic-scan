@@ -1,3 +1,7 @@
+const axios = require('axios');
+const path = require('path');
+const fs = require('fs');
+const FormData = require('form-data');
 const { User, Examination } = require('../../models');
 
 const getMyExamResult = async (req, res) => {
@@ -16,6 +20,76 @@ const getMyExamResult = async (req, res) => {
     }
 };
 
+const submitExam = async (req, res) => {
+    if (req.fileValidationError) {
+        return res.status(400).json({ message: req.fileValidationError });
+    }
+
+    if (!req.file) {
+        return res.status(400).json({ message: 'Gambar mata tidak ditemukan' });
+    }
+
+    if (req.role != 'pasien') {
+        return res
+            .status(403)
+            .json({ message: 'Submit foto mata harus seorang pasien' });
+    }
+
+    const patientId = req.user_id;
+    const { complaints } = req.body;
+    const eyePicFilename = req.file.filename;
+    const eyePicPath = path.join(
+        __dirname,
+        '../../../public/images/eye-scans/',
+        eyePicFilename
+    );
+
+    try {
+        const doctor = await User.findOne({ where: { role: 'dokter' } });
+        if (!doctor) {
+            return res
+                .status(500)
+                .json({ message: 'Dokter tidak tersedia saat ini' });
+        }
+
+        const form = new FormData();
+        form.append('file', fs.createReadStream(eyePicPath));
+
+        const aiResponse = await axios.post(
+            'https://opticscan.humicprototypingapi.online/predict',
+            form,
+            {
+                headers: form.getHeaders(),
+            }
+        );
+
+        const aiDiagnosis =
+            aiResponse.data?.predicted_class || 'Tidak ada hasil dari AI';
+
+        const newExam = await Examination.create({
+            patient_id: patientId,
+            doctor_id: doctor.user_id,
+            examination_date: new Date(),
+            eye_pic: req.file.filename,
+            complaints: complaints || null,
+            diagnosis: aiDiagnosis,
+            doctors_note: null,
+            status: 'ongoing',
+        });
+
+        res.status(201).json({
+            message: 'Pemeriksaan berhasil diajukan',
+            data: newExam,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Gagal mengajukan pemeriksaan',
+            error: error.message,
+        });
+    }
+};
+
 module.exports = {
-    getMyExamResult,
+    getExamResult,
+    submitExam,
 };

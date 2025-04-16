@@ -29,6 +29,7 @@ app.use(express.static('public'));
 
 app.use('/auth', require('./src/routes/AuthRoutes.js'));
 app.use('/user', verifyJWT, require('./src/routes/UserRoutes.js'));
+app.use('/exam', verifyJWT, require('./src/routes/ExaminationRoutes.js'));
 app.use((req, res) => {
     res.status(404).json({ message: 'Endpoint tidak ditemukan' });
 });
