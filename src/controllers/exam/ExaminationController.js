@@ -13,6 +13,10 @@ const getExamResult = async (req, res) => {
             where: {
                 [Op.or]: [{ patient_id: user_id }, { doctor_id: user_id }],
             },
+            include: [
+                { model: User, as: 'patient', attributes: ['name'] },
+                { model: User, as: 'doctor', attributes: ['name'] },
+            ],
         });
         res.json({
             message: `Data hasil pemeriksaan berdasarkan user login berhasil diambil`,
