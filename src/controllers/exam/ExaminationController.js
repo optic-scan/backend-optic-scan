@@ -17,6 +17,7 @@ const getExamResult = async (req, res) => {
                 { model: User, as: 'patient', attributes: ['name'] },
                 { model: User, as: 'doctor', attributes: ['name'] },
             ],
+            order: [['created_at', 'DESC']],
         });
         res.json({
             message: `Data hasil pemeriksaan berdasarkan user login berhasil diambil`,
