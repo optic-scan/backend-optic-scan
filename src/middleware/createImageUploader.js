@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const createImageUploader = ({ folderName, filePrefix }) => {
+const createImageUploader = ({ folderName, filePrefix, fileKey }) => {
     const uploadDir = path.join(__dirname, `../../public/images/${folderName}`);
     if (!fs.existsSync(uploadDir)) {
         fs.mkdirSync(uploadDir, { recursive: true });
@@ -35,7 +35,7 @@ const createImageUploader = ({ folderName, filePrefix }) => {
         storage,
         fileFilter,
         limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-    });
+    }).single(fileKey);
 };
 
 module.exports = createImageUploader;

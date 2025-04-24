@@ -17,7 +17,7 @@ router.patch('/profile', updateUserProfile);
 router.patch('/change-password', changePasswordController);
 router.patch(
     '/change-profile-pic',
-    upload.single('profile_pic'),
+    // upload.single('profile_pic'),
     changeProfilePicController
 );
 router.get('/users-count', getTotalPatientsAndDoctors);
