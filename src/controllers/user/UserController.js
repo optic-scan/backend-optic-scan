@@ -7,12 +7,12 @@ const getUserProfile = async (req, res) => {
         const response = await User.findByPk(user_id, {
             attributes: ['name', 'email', 'birthdate', 'role', 'profile_pic'],
         });
-        res.json({
+        return res.status(200).json({
             message: `Data user yang login berhasil diambil`,
             data: response,
         });
     } catch (error) {
-        res.status(500).json({ message: error.message, data: null });
+        return res.status(500).json({ message: error.message, data: null });
     }
 };
 
@@ -29,10 +29,10 @@ const updateUserProfile = async (req, res) => {
             birthdate: birthdate || user.birthdate,
         });
 
-        res.json({ message: 'Profil berhasil diperbarui' });
+        return res.json({ message: 'Profil berhasil diperbarui' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Terjadi kesalahan saat update profil',
         });
     }

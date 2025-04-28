@@ -21,10 +21,10 @@ const changePassword = async (req, res) => {
         const hashedPwd = await bcrypt.hash(newPassword, 10);
 
         await User.update({ password: hashedPwd }, { where: { user_id } });
-        return res.json({ message: 'Password berhasil diubah' });
+        return res.status(200).json({ message: 'Password berhasil diubah' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Terjadi kesalahan saat merubah password',
         });
     }

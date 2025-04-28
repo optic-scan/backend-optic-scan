@@ -5,7 +5,7 @@ const getTotalPatientsAndDoctors = async (req, res) => {
         const totalPatients = await User.count({ where: { role: 'pasien' } });
         const totalDoctors = await User.count({ where: { role: 'dokter' } });
 
-        res.status(200).json({
+        return res.status(200).json({
             message: 'Berhasil mengambil data total pasien dan dokter',
             data: {
                 total_pasien: totalPatients,
@@ -13,7 +13,7 @@ const getTotalPatientsAndDoctors = async (req, res) => {
             },
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Gagal mengambil data total pasien dan dokter',
             error: error.message,
         });

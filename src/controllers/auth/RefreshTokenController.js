@@ -32,12 +32,15 @@ const handleRefreshToken = async (req, res) => {
                     { expiresIn: '60m' }
                 );
 
-                res.json({ accessToken });
+                return res.status(200).json({
+                    message: 'Access token terbaru berhasil dibuat',
+                    accessToken,
+                });
             }
         );
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Gagal memperbarui token' });
+        return res.status(500).json({ message: 'Gagal memperbarui token' });
     }
 };
 

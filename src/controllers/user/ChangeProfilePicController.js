@@ -29,7 +29,7 @@ const changeProfilePic = async (req, res) => {
 
         await user.update({ profile_pic: req.file.filename });
 
-        res.status(200).json({
+        return res.status(200).json({
             message: 'Foto profil berhasil diperbarui',
             file: req.file.filename,
         });
@@ -43,7 +43,7 @@ const changeProfilePic = async (req, res) => {
             await deleteFileIfExists(newFilePath);
         }
 
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Gagal memperbarui foto profil',
             error: error.message,
         });

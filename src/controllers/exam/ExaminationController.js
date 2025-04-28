@@ -23,12 +23,12 @@ const getExamResult = async (req, res) => {
             ],
             order: [['created_at', 'DESC']],
         });
-        res.json({
+        return res.status(200).json({
             message: `Data hasil pemeriksaan berdasarkan user login berhasil diambil`,
             data: response,
         });
     } catch (error) {
-        res.status(500).json({ message: error.message, data: null });
+        return res.status(500).json({ message: error.message, data: null });
     }
 };
 
@@ -99,12 +99,12 @@ const submitExam = async (req, res) => {
             status: 'ongoing',
         });
 
-        res.status(201).json({
+        return res.status(201).json({
             message: 'Pemeriksaan berhasil diajukan',
             data: newExam,
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Gagal mengajukan pemeriksaan',
             error: error.message,
         });
@@ -143,12 +143,12 @@ const diagnosisDokter = async (req, res) => {
             status: 'complete',
         });
 
-        res.status(200).json({
+        return res.status(200).json({
             message: 'Diagnosa berhasil diperbarui',
             data: examination,
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Gagal memberikan diagnosa',
             error: error.message,
         });

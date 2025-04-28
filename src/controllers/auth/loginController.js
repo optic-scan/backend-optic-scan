@@ -55,14 +55,14 @@ const handleLogin = async (req, res) => {
             sameSite: 'Lax',
             secure: false,
         });
-        res.json({
+        return res.status(200).json({
             message: 'Login berhasil',
             role: userFound.role,
             accessToken,
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Terjadi kesalahan saat login pada server',
         });
     }

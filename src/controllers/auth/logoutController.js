@@ -32,7 +32,7 @@ const handleLogout = async (req, res) => {
         return res.status(200).json({ message: 'Logout berhasil' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Gagal logout' });
+        return res.status(500).json({ message: 'Gagal logout' });
     }
 };
 

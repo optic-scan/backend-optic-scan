@@ -35,10 +35,10 @@ const handleRegister = async (req, res) => {
             refresh_token: null,
         };
         await User.create(newUser);
-        res.status(201).json({ message: 'User baru berhasil dibuat' });
+        return res.status(201).json({ message: 'User baru berhasil dibuat' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 
