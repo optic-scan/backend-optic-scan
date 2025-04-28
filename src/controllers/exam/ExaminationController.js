@@ -104,8 +104,18 @@ const submitExam = async (req, res) => {
             data: newExam,
         });
     } catch (error) {
+        let errorMessage = 'Gagal mengajukan pemeriksaan';
+
+        if (error.response) {
+            errorMessage = error.response.data?.message || errorMessage;
+        } else if (error.request) {
+            errorMessage = 'Tidak dapat menghubungi server AI';
+        } else {
+            errorMessage = error.message;
+        }
+
         return res.status(500).json({
-            message: 'Gagal mengajukan pemeriksaan',
+            message: errorMessage,
             error: error.message,
         });
     }
@@ -113,6 +123,11 @@ const submitExam = async (req, res) => {
 
 const diagnosisDokter = async (req, res) => {
     const user_id = req.user_id;
+    if (!examination_id || !diagnosis || !doctors_note) {
+        return res.status(400).json({
+            message: 'Semua field wajib diisi',
+        });
+    }
     const { examination_id, diagnosis, doctors_note } = req.body;
 
     try {
