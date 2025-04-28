@@ -14,7 +14,11 @@ const getExamResult = async (req, res) => {
                 [Op.or]: [{ patient_id: user_id }, { doctor_id: user_id }],
             },
             include: [
-                { model: User, as: 'patient', attributes: ['name'] },
+                {
+                    model: User,
+                    as: 'patient',
+                    attributes: ['name', 'birthdate'],
+                },
                 { model: User, as: 'doctor', attributes: ['name'] },
             ],
             order: [['created_at', 'DESC']],
@@ -77,17 +81,21 @@ const submitExam = async (req, res) => {
             }
         );
 
-        const aiDiagnosis =
-            aiResponse.data?.predicted_class || 'Tidak ada hasil dari AI';
+        let aiDiagnosis =
+            aiResponse.data?.predicted_class.replace(/_/g, ' ') ||
+            'Tidak ada hasil dari AI';
+
+        aiDiagnosis = aiDiagnosis.replace(/_/g, ' ');
+        aiDiagnosis = 'Possible ' + aiDiagnosis;
 
         const newExam = await Examination.create({
             patient_id: patientId,
             doctor_id: randomDoctor.user_id,
             examination_date: new Date(),
             eye_pic: req.file.filename,
-            complaints: complaints || null,
+            complaints: complaints || '-',
             diagnosis: aiDiagnosis,
-            doctors_note: null,
+            doctors_note: '-',
             status: 'ongoing',
         });
 
