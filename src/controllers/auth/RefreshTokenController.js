@@ -15,16 +15,18 @@ const handleRefreshToken = async (req, res) => {
         });
 
         if (!userFound)
-            return res.status(403).json({ message: 'Akses ditolak' });
+            return res
+                .status(403)
+                .json({ message: 'Akses ditolak. Silakan login kembali.' });
 
         jwt.verify(
             refreshToken,
             process.env.REFRESH_TOKEN_SECRET,
             (err, decoded) => {
                 if (err || decoded.user_id !== userFound.user_id)
-                    return res
-                        .status(403)
-                        .json({ message: 'Token tidak valid' });
+                    return res.status(403).json({
+                        message: 'Token tidak valid. Silakan login kembali',
+                    });
 
                 const accessToken = jwt.sign(
                     { user_id: decoded.user_id, role: decoded.role },
