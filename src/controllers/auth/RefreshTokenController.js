@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../../models');
+const { generateAccessToken } = require('../../utils/jwt');
 require('dotenv').config();
 
 const handleRefreshToken = async (req, res) => {
@@ -28,11 +29,10 @@ const handleRefreshToken = async (req, res) => {
                         message: 'Token tidak valid. Silakan login kembali',
                     });
 
-                const accessToken = jwt.sign(
-                    { user_id: decoded.user_id, role: decoded.role },
-                    process.env.ACCESS_TOKEN_SECRET,
-                    { expiresIn: '60m' }
-                );
+                const accessToken = generateAccessToken({
+                    user_id: userFound.user_id,
+                    role: userFound.role,
+                });
 
                 return res.status(200).json({
                     message: 'Access token terbaru berhasil dibuat',
