@@ -123,12 +123,12 @@ const submitExam = async (req, res) => {
 
 const diagnosisDokter = async (req, res) => {
     const user_id = req.user_id;
+    const { examination_id, diagnosis, doctors_note } = req.body;
     if (!examination_id || !diagnosis || !doctors_note) {
         return res.status(400).json({
             message: 'Semua field wajib diisi',
         });
     }
-    const { examination_id, diagnosis, doctors_note } = req.body;
 
     try {
         const user = await User.findByPk(user_id);
