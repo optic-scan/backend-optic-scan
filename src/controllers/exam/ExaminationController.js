@@ -124,7 +124,7 @@ const submitExam = async (req, res) => {
 const diagnosisDokter = async (req, res) => {
     const user_id = req.user_id;
     const { examination_id, diagnosis, doctors_note } = req.body;
-    if (!examination_id || !diagnosis || !doctors_note) {
+    if (!examination_id || !diagnosis) {
         return res.status(400).json({
             message: 'Semua field wajib diisi',
         });
@@ -154,7 +154,7 @@ const diagnosisDokter = async (req, res) => {
 
         await examination.update({
             diagnosis: diagnosis,
-            doctors_note: doctors_note,
+            doctors_note: doctors_note || '-',
             status: 'complete',
         });
 
